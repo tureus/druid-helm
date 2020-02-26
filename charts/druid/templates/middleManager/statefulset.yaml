@@ -68,10 +68,10 @@ spec:
         args: [ "middleManager" ]
         env:
         {{- if .Values.zookeeper.enabled }}
-        - name: ZOOKEEPER_HOST
+        - name: ZOOKEEPER
           value: {{ .Release.Name }}-zookeeper-headless:2181
         {{- else }}
-        - name: ZOOKEEPER_HOST
+        - name: ZOOKEEPER
           value: {{ .Values.zkHosts }}
         {{- end }}
         {{- if .Values.mysql.enabled }}

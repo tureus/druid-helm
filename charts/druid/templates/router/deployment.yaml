@@ -26,17 +26,25 @@ spec:
 {{ toYaml . | indent 8 }}
       {{- end }}
     spec:
+      volumes:
+        - name: "druid-sh"
+          configMap:
+            name: "druid-sh"
+            defaultMode: 0777
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          args: [ "router" ]
+{{/*          imagePullPolicy: {{ .Values.image.pullPolicy }}*/}}
+          command: ["sleep", "300000"]
+{{/*          args: [ "router" ]*/}}
           env:
           {{- if .Values.zookeeper.enabled }}
-          - name: ZOOKEEPER_HOST
-            value: {{ .Release.Name }}-zookeeper-headless:2181
+          - name: ZOOKEEPER
+            value: |
+              {{ .Release.Name }}-zookeeper-headless:2181
+
           {{- else }}
-          - name: ZOOKEEPER_HOST
+          - name: ZOOKEEPER
             value: {{ .Values.zkHosts }}
           {{- end }}
           {{- if .Values.mysql.enabled }}
@@ -59,20 +67,24 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          volumeMounts:
+            - mountPath: "/druid.sh-bingo"
+              subPath: "druid.sh"
+              name: "druid-sh"
           ports:
             - name: http
               containerPort: {{ .Values.router.port }}
               protocol: TCP
-          livenessProbe:
-            initialDelaySeconds: 60
-            httpGet:
-              path: /status/health
-              port: {{ .Values.router.port }}
-          readinessProbe:
-            initialDelaySeconds: 60
-            httpGet:
-              path: /status/health
-              port: {{ .Values.router.port }}
+{{/*          livenessProbe:*/}}
+{{/*            initialDelaySeconds: 60*/}}
+{{/*            httpGet:*/}}
+{{/*              path: /status/health*/}}
+{{/*              port: {{ .Values.router.port }}*/}}
+{{/*          readinessProbe:*/}}
+{{/*            initialDelaySeconds: 60*/}}
+{{/*            httpGet:*/}}
+{{/*              path: /status/health*/}}
+{{/*              port: {{ .Values.router.port }}*/}}
           resources:
 {{ toYaml .Values.router.resources | indent 12 }}
     {{- with .Values.router.nodeSelector }}
