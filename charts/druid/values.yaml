@@ -1,8 +1,8 @@
 # Default values for druid.
 
 image:
-  repository: maver1ckpl/druid-docker
-  tag: 0.12.3-2
+  repository: apache/druid
+  tag: 0.17.0
   pullPolicy: IfNotPresent
 
 env:
@@ -79,7 +79,7 @@ overlord:
 
   name: overlord
 
-  port: 8090
+  port: 8081
   serviceType: ClusterIP
 
   javaOpts: "-Xms1G -Xmx1G"

@@ -1,7 +1,3 @@
-image:
-  repository: apache/druid
-  tag: 0.17.0
-
 historical:
   javaOpts: "-Xms512M -Xmx1G -XX:MaxDirectMemorySize=1g"
 

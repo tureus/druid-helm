@@ -5,7 +5,7 @@ template:
 
 install:
 	kubectl config use-context docker-desktop
-	helm upgrade --install --namespace "druid" druid . -f values.yaml,docker-desktop-cluster.yaml --wait
+	helm upgrade --install --namespace "druid" druid . -f values.yaml,docker-desktop-cluster.yaml
 
 add-repo:
 	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
