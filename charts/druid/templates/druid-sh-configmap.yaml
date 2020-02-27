@@ -108,6 +108,16 @@ data:
         setKey $SERVICE druid.host $(ip r get 1 | awk '{print $7;exit}')
     fi
 
+    # TODO: Put this in a layered image! So silly to download everytime.
+    if [ "${DOWNLOAD_MYSQL}" != "" ]
+    then
+      cd /tmp
+      wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
+      tar xzf mysql-connector-java-5.1.38.tar.gz
+      mv mysql-connector-java-5.1.38/*.jar /opt/apache-druid-0.17.0/extensions/mysql-metadata-storage/
+      cd -
+    fi
+
     env | grep ^druid_ | while read evar;
     do
         echo "Hello from the env greppy loop, looking at QQQ $evar QQQ"

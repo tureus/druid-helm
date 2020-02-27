@@ -37,6 +37,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: [ "overlord" ]
+{{/*          command: ["sleep", "30000"]*/}}
           env:
           {{- if .Values.zookeeper.enabled }}
           - name: ZOOKEEPER
@@ -45,26 +46,18 @@ spec:
           - name: ZOOKEEPER
             value: {{ .Values.zkHosts }}
           {{- end }}
-          {{- if .Values.mysql.enabled }}
-          - name: DB_HOST
-            value: {{ .Release.Name }}-mysql
-          - name: DB_TYPE
-            value: mysql
-          - name: DB_USERNAME
-            value: {{ .Values.mysql.mysqlUser }}
-          - name: DB_PASSWORD
-            value: {{ .Values.mysql.mysqlPassword }}
-          - name: DB_DBNAME
-            value: {{ .Values.mysql.mysqlDatabase }}
-          - name: DB_PORT
-            value: "3306"
-          {{- end }}
           - name: JAVA_OPTS
             value: {{ .Values.overlord.javaOpts }}
           {{- range $key, $value :=  .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range $key, $value :=  .Values.overlord.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          - name: DOWNLOAD_MYSQL
+            value: "true"
           volumeMounts:
             - mountPath: "/druid.sh"
               subPath: "druid.sh"

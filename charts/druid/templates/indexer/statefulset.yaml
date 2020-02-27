@@ -71,8 +71,8 @@ spec:
             defaultMode: 0777
       containers:
       - name: druid
-{{/*        args: [ "indexer" ]*/}}
-        command: ["sleep", "300000"]
+        args: [ "indexer" ]
+{{/*        command: ["sleep", "300000"]*/}}
         env:
         {{- if .Values.zookeeper.enabled }}
         - name: ZOOKEEPER

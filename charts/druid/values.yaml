@@ -107,6 +107,13 @@ overlord:
 
   podAnnotations: {}
 
+  env:
+    druid_extensions_loadList: "[\"mysql-metadata-storage\", \"druid-s3-extensions\"]"
+    druid_metadata_storage_type: mysql
+    druid_metadata_storage_connector_connectURI: jdbc:mysql://druid-mysql/druid
+    druid_metadata_storage_connector_user: druid
+    druid_metadata_storage_connector_password: druid
+
 router:
   replicaCount: 1
 
