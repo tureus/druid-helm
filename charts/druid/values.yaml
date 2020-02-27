@@ -190,8 +190,8 @@ historical:
   updateStrategy:
     type: RollingUpdate
 
-middleManager:
-  name: middle-manager
+indexer:
+  name: indexer
   replicaCount: 1
   port: 8091
   serviceType: ClusterIP

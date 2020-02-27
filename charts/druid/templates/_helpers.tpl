@@ -40,11 +40,11 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
-Create a default fully qualified middleManager name.
+Create a default fully qualified indexer name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "druid.middleManager.fullname" -}}
-{{ template "druid.fullname" . }}-{{ .Values.middleManager.name }}
+{{- define "druid.indexer.fullname" -}}
+{{ template "druid.fullname" . }}-{{ .Values.indexer.name }}
 {{- end -}}
 
 
