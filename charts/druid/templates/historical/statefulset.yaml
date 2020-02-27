@@ -22,8 +22,9 @@ spec:
         app: {{ template "druid.name" . }}
         component: {{ .Values.historical.name }}
         release: {{ .Release.Name }}
-        {{- with .Values.historical.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/druid-sh-configmap.yaml") . | sha256sum }}
+        {{- with .Values.historical.podAnnotations }}
 {{ toYaml . | indent 8 }}
         {{- end }}
     spec:
@@ -63,9 +64,15 @@ spec:
       tolerations:
 {{ toYaml .Values.historical.tolerations | indent 8 }}
 {{- end }}
+      volumes:
+        - name: "druid-sh"
+          configMap:
+            name: "druid-sh"
+            defaultMode: 0777
       containers:
       - name: druid
         args: [ "historical" ]
+{{/*        command: ["sleep", "30000"]*/}}
         env:
         {{- if .Values.zookeeper.enabled }}
         - name: ZOOKEEPER
@@ -90,7 +97,7 @@ spec:
         {{- end }}
         - name: JAVA_OPTS
           value: {{ .Values.historical.javaOpts }}
-        {{- range $key, $value := .Values.env }}
+        {{- range $key, $value := .Values.historical.env }}
         - name: {{ $key }}
           value: {{ $value | quote }}
         {{- end }}
@@ -114,6 +121,9 @@ spec:
         volumeMounts:
         - mountPath: /var/druid/
           name: data
+        - mountPath: /druid.sh
+          subPath: druid.sh
+          name: druid-sh
   {{- if not .Values.historical.persistence.enabled }}
       volumes:
       - name: data

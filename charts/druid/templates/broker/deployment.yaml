@@ -21,11 +21,17 @@ spec:
         app: {{ include "druid.name" . }}
         release: {{ .Release.Name }}
         component: {{ .Values.broker.name }}
-      {{- with .Values.broker.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/druid-sh-configmap.yaml") . | sha256sum }}
+      {{- with .Values.broker.podAnnotations }}
 {{ toYaml . | indent 8 }}
-      {{- end }}        
+      {{- end }}
     spec:
+      volumes:
+        - name: "druid-sh"
+          configMap:
+            name: "druid-sh"
+            defaultMode: 0777
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -59,6 +65,10 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          volumeMounts:
+            - mountPath: "/druid.sh"
+              subPath: "druid.sh"
+              name: "druid-sh"
           ports:
             - name: http
               containerPort: {{ .Values.broker.port }}

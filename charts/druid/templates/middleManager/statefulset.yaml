@@ -22,8 +22,9 @@ spec:
         app: {{ template "druid.name" . }}
         component: {{ .Values.middleManager.name }}
         release: {{ .Release.Name }}
-        {{- if .Values.middleManager.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/druid-sh-configmap.yaml") . | sha256sum }}
+        {{- if .Values.middleManager.podAnnotations }}
 {{ toYaml .Values.middleManager.podAnnotations | indent 8 }}
         {{- end }}
     spec:
@@ -63,9 +64,15 @@ spec:
       tolerations:
 {{ toYaml .Values.middleManager.tolerations | indent 8 }}
 {{- end }}
+      volumes:
+        - name: "druid-sh"
+          configMap:
+            name: "druid-sh"
+            defaultMode: 0777
       containers:
       - name: druid
-        args: [ "middleManager" ]
+{{/*        args: [ "middleManager" ]*/}}
+        command: ["sleep", "300000"]
         env:
         {{- if .Values.zookeeper.enabled }}
         - name: ZOOKEEPER
@@ -94,18 +101,19 @@ spec:
         - name: {{ $key }}
           value: {{ $value | quote }}
         {{- end }}
+{{/*        {{- range $key, $value := .Values.middle-manager }}*/}}
         resources:
 {{ toYaml .Values.middleManager.resources | indent 12 }}
-        livenessProbe:
-          initialDelaySeconds: 60
-          httpGet:
-            path: /status/health
-            port: {{ .Values.middleManager.port }}
-        readinessProbe:
-          initialDelaySeconds: 60
-          httpGet:
-            path: /status/health
-            port: {{ .Values.middleManager.port }}
+{{/*        livenessProbe:*/}}
+{{/*          initialDelaySeconds: 60*/}}
+{{/*          httpGet:*/}}
+{{/*            path: /status/health*/}}
+{{/*            port: {{ .Values.middleManager.port }}*/}}
+{{/*        readinessProbe:*/}}
+{{/*          initialDelaySeconds: 60*/}}
+{{/*          httpGet:*/}}
+{{/*            path: /status/health*/}}
+{{/*            port: {{ .Values.middleManager.port }}*/}}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
         ports:
@@ -114,6 +122,9 @@ spec:
         volumeMounts:
         - mountPath: /var/druid/
           name: data
+        - mountPath: /druid.sh
+          subPath: druid.sh
+          name: druid-sh
   {{- if not .Values.middleManager.persistence.enabled }}
       volumes:
       - name: data

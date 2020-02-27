@@ -21,8 +21,9 @@ spec:
         app: {{ include "druid.name" . }}
         release: {{ .Release.Name }}
         component: {{ .Values.router.name }}
-      {{- with .Values.router.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/druid-sh-configmap.yaml") . | sha256sum }}
+      {{- with .Values.router.podAnnotations }}
 {{ toYaml . | indent 8 }}
       {{- end }}
     spec:
@@ -35,8 +36,8 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
 {{/*          imagePullPolicy: {{ .Values.image.pullPolicy }}*/}}
-          command: ["sleep", "300000"]
-{{/*          args: [ "router" ]*/}}
+{{/*          command: ["sleep", "300000"]*/}}
+          args: [ "router" ]
           env:
           {{- if .Values.zookeeper.enabled }}
           - name: ZOOKEEPER
@@ -68,23 +69,23 @@ spec:
             value: {{ $value | quote }}
           {{- end }}
           volumeMounts:
-            - mountPath: "/druid.sh-bingo"
+            - mountPath: "/druid.sh"
               subPath: "druid.sh"
               name: "druid-sh"
           ports:
             - name: http
               containerPort: {{ .Values.router.port }}
               protocol: TCP
-{{/*          livenessProbe:*/}}
-{{/*            initialDelaySeconds: 60*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /status/health*/}}
-{{/*              port: {{ .Values.router.port }}*/}}
-{{/*          readinessProbe:*/}}
-{{/*            initialDelaySeconds: 60*/}}
-{{/*            httpGet:*/}}
-{{/*              path: /status/health*/}}
-{{/*              port: {{ .Values.router.port }}*/}}
+          livenessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /status/health
+              port: {{ .Values.router.port }}
+          readinessProbe:
+            initialDelaySeconds: 60
+            httpGet:
+              path: /status/health
+              port: {{ .Values.router.port }}
           resources:
 {{ toYaml .Values.router.resources | indent 12 }}
     {{- with .Values.router.nodeSelector }}

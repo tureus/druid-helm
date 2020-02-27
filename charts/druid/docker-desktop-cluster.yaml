@@ -1,3 +1,18 @@
 image:
   repository: apache/druid
   tag: 0.17.0
+
+historical:
+  javaOpts: "-Xms512M -Xmx1G -XX:MaxDirectMemorySize=1g"
+
+  resources:
+    requests:
+      memory: 8Gi
+    limits:
+      memory: 8Gi
+
+  env:
+    DRUID_USE_CONTAINER_IP: "true"
+    druid_processing_numThreads: "2"
+    druid_processing_numMergeBuffers: "2"
+    druid_processing_buffer_sizeBytes: "104857600"

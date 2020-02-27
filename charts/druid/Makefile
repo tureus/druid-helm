@@ -1,7 +1,11 @@
 .PHONY: install add-repo
 
+template:
+	helm template --namespace=druid druid .
+
 install:
-	helm upgrade --install --namespace "druid" druid . -f docker-desktop-cluster.yaml,values.yaml
+	kubectl config use-context docker-desktop
+	helm upgrade --install --namespace "druid" druid . -f values.yaml,docker-desktop-cluster.yaml
 
 add-repo:
 	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
