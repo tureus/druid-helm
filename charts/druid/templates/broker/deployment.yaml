@@ -65,6 +65,10 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
+          {{- range $key, $value :=  .Values.broker.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
           volumeMounts:
             - mountPath: "/druid.sh"
               subPath: "druid.sh"
