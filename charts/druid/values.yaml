@@ -1,5 +1,3 @@
-# Default values for druid.
-
 image:
   repository: apache/druid
   tag: 0.17.0
@@ -7,274 +5,66 @@ image:
 
 env:
   DRUID_USE_CONTAINER_IP: true
-
-broker:
-  replicaCount: 1
-
-  name: broker
-
-  port: 8082
-  serviceType: ClusterIP
-
-  javaOpts: "-Xms2G -Xmx2G -XX:MaxDirectMemorySize=8g"
-
-  ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    path: /
-    hosts:
-      - chart-example.local
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
-  resources: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
-  podAnnotations: {}
-
-coordinator:
-  replicaCount: 1
-
-  name: coordinator
-
-  port: 8081
-  serviceType: ClusterIP
-
-  javaOpts: "-Xms1G -Xmx1G"
-
-  ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    path: /
-    hosts:
-      - chart-example.local
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
-  resources: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
-  podAnnotations: {}
-
-overlord:
-  replicaCount: 1
-
-  name: overlord
-
-  port: 8081
-  serviceType: ClusterIP
-
-  javaOpts: "-Xms1G -Xmx1G"
-
-  ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    path: /
-    hosts:
-      - chart-example.local
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
-  resources: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
-  podAnnotations: {}
-
-  env:
-    druid_extensions_loadList: "[\"mysql-metadata-storage\", \"druid-s3-extensions\"]"
-    druid_metadata_storage_type: mysql
-    druid_metadata_storage_connector_connectURI: jdbc:mysql://druid-mysql/druid
-    druid_metadata_storage_connector_user: druid
-    druid_metadata_storage_connector_password: druid
-
-router:
-  replicaCount: 1
-
-  name: router
-
-  port: 8888
-  serviceType: ClusterIP
-
-  javaOpts: "-Xms1G -Xmx1G"
-
-  ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-    path: /
-    hosts:
-      - chart-example.local
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
-  resources: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
-  podAnnotations: {}
-
-
-historical:
-  name: historical
-  replicaCount: 1
-  port: 8083
-  serviceType: ClusterIP
-
-  javaOpts: "-Xms2G -Xmx2G -XX:MaxDirectMemorySize=8g"
-
-  ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    path: /
-    hosts:
-      - chart-example.local
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    size: "4Gi"
-    # storageClass: "ssd"
-
-  antiAffinity: "soft"
-
-  nodeAffinity: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  resources: {}
-
-  ## (dict) If specified, apply these annotations to each master Pod
-  podAnnotations: {}
-  #   example: master-foo
-
-  podDisruptionBudget:
-    enabled: false
-    # minAvailable: 2
-    maxUnavailable: 1
-
-  updateStrategy:
-    type: RollingUpdate
-
-indexer:
-  name: indexer
-  replicaCount: 1
-  port: 8091
-  serviceType: ClusterIP
-
-  javaOpts: "-Xms1G -Xmx1G"
-
-  ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    path: /
-    hosts:
-      - chart-example.local
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
-  persistence:
-    enabled: true
-    accessMode: ReadWriteOnce
-    size: "4Gi"
-    # storageClass: "ssd"
-
-  antiAffinity: "soft"
-
-  nodeAffinity: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  resources: {}
-
-  ## (dict) If specified, apply these annotations to each master Pod
-  podAnnotations: {}
-  #   example: master-foo
-
-  podDisruptionBudget:
-    enabled: false
-    # minAvailable: 2
-    maxUnavailable: 1
-
-  updateStrategy:
-    type: RollingUpdate
-
-
-# ------------------------------------------------------------------------------
-# Zookeeper:
-# ------------------------------------------------------------------------------
-
-# zkHosts: druid-zookeeper-headless:2181
-
-zookeeper:
+  druid_extensions_loadList: "[\"mysql-metadata-storage\"]" # , \"druid-s3-extensions\"
+  druid_metadata_storage_type: mysql
+  druid_metadata_storage_connector_connectURI: jdbc:mysql://mysql/druid
+  druid_metadata_storage_connector_user: druid
+  druid_metadata_storage_connector_password: druid
+  DOWNLOAD_MYSQL: yesplease
+
+replicaCount: 1
+component: "replace-me"
+
+antiAffinity: "soft"
+nodeAffinity: {}
+nodeSelector: {}
+tolerations: []
+podAnnotations: {}
+
+javaOpts: "-Xms2G -Xmx2G -XX:MaxDirectMemorySize=8g"
+
+resources: {}
+
+#broker
+#port: 8082
+#coordinator
+#port: 8081
+#overlord
+#port: 8081
+#router
+#port: 8888
+#historical
+#port: 8083
+#indexer
+#port: 8091
+
+persistence:
   enabled: true
-  ## Environmental variables to set in Zookeeper
-  ##
-  env:
-    ## The JVM heap size to allocate to Zookeeper
-    ZK_HEAP_SIZE: "512M"
-  ## Configure Zookeeper persistence
-  persistence:
-    enabled: true
+  accessMode: ReadWriteOnce
+  size: "4Gi"
+  # storageClass: "ssd"
 
-# ------------------------------------------------------------------------------
-# MySQL:
-# ------------------------------------------------------------------------------
-mysql:
-  enabled: true
-  mysqlRootPassword: druidroot
-  mysqlUser: druid
-  mysqlPassword: druid
-  mysqlDatabase: druid
-  configurationFiles:
-    mysql_collate.cnf: |-
-      [mysqld]
-      character-set-server=utf8
-      collation-server=utf8_unicode_ci
+updateStrategy:
+  type: RollingUpdate
+
+ingress:
+  enabled: false
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+serviceType: ClusterIP
+
+podDisruptionBudget:
+  enabled: false
+  # minAvailable: 2
+  maxUnavailable: 1
+
+zkHosts: "zookeeper-headless:2181"
