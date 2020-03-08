@@ -19,6 +19,12 @@ install-zk:
 install-mysql:
 	helm upgrade --install --namespace=druid mysql             charts/mysql -f mysql-values.yaml
 
+template-kafka:
+	helm template --namespace=druid kafka-cp cp-helm-charts -f kafka-values.yaml --show-only=charts/cp-kafka/templates/statefulset.yaml
+
+install-kafka:
+	helm upgrade --install --namespace=druid kafka-cp          charts/cp-helm-charts-0.4.0.tgz -f kafka-values.yaml
+
 add-repo:
 	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
 	helm repo update

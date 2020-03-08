@@ -5,5 +5,8 @@ dependencies:
 - name: mysql
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 0.10.2
-digest: sha256:28aa139b80203f125af6c7b5c9881d0c7de98c3a420ab1a5d18daf76c819b850
-generated: 2018-11-13T14:34:00.5675116+01:00
+- name: cp-helm-charts
+  repository: https://confluentinc.github.io/cp-helm-charts/
+  version: 0.4.0
+digest: sha256:f4b7cb660be56aff711f79cfebd11bc8bea4464a81613ce31a333ea48094bb1a
+generated: "2020-03-06T12:48:24.670703-04:00"
