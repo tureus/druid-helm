@@ -1,0 +1,28 @@
+cp-kafka:
+  enabled: true
+  cp-zookeeper:
+    enabled: false
+    url: "zookeeper-headless:2181"
+
+
+cp-control-center:
+  enabled: true
+  cp-zookeeper:
+    enabled: false
+    url: "zookeeper-headless:2181"
+
+cp-kafka-connect:
+  enabled: false
+
+cp-kafka-rest:
+  enabled: false
+
+cp-ksql-server:
+  enabled: false
+
+cp-schema-registry:
+  enabled: false
+
+cp-zookeeper:
+  enabled: false
+

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: druid-sh
+  name: {{ template "druid.fullname" . }}-druid-sh
 data:
   druid.sh: |
     #!/bin/sh

@@ -1,6 +1,6 @@
-{{- if .Values.indexer.ingress.enabled -}}
-{{- $fullName := include "druid.indexer.fullname" . -}}
-{{- $ingressPath := .Values.indexer.ingress.path -}}
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "druid.fullname" . -}}
+{{- $ingressPath := .Values.ingress.path -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -8,17 +8,17 @@ metadata:
   labels:
     app: {{ include "druid.name" . }}
     chart: {{ include "druid.chart" . }}
-    component: {{ .Values.indexer.name }}
+    component: {{ .Values.component }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- with .Values.indexer.ingress.annotations }}
+{{- with .Values.ingress.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
-{{- if .Values.indexer.ingress.tls }}
+{{- if .Values.ingress.tls }}
   tls:
-  {{- range .Values.indexer.ingress.tls }}
+  {{- range .Values.ingress.tls }}
     - hosts:
       {{- range .hosts }}
         - {{ . | quote }}
@@ -27,7 +27,7 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .Values.indexer.ingress.hosts }}
+  {{- range .Values.ingress.hosts }}
     - host: {{ . | quote }}
       http:
         paths:

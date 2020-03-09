@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: {{ template "druid.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: {{ .Values.component }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "druid.fullname" . }}
+spec:
+  serviceName: {{ template "druid.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "druid.name" . }}
+      release: {{ .Release.Name }}
+      component: {{ .Values.component }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "druid.name" . }}
+        component: {{ .Values.component }}
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/druid-sh-configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{ toYaml . | indent 8 }}
+    {{- end }}
+    spec:
+      {{- if or .Values.antiAffinity .Values.nodeAffinity }}
+      affinity:
+        {{- end }}
+        {{- if eq .Values.antiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  app: "{{ template "druid.name" . }}"
+                  release: "{{ .Release.Name }}"
+                  component: "{{ .Values.component }}"
+        {{- else if eq .Values.antiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: "{{ template "druid.name" . }}"
+                    release: "{{ .Release.Name }}"
+                    component: "{{ .Values.component }}"
+        {{- end }}
+        {{- with .Values.nodeAffinity }}
+        nodeAffinity:
+      {{ toYaml . | indent 10 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+      {{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+      {{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      volumes:
+        - name: "druid-sh"
+          configMap:
+            name: {{ template "druid.fullname" . }}-druid-sh
+            defaultMode: 0777
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: druid
+          args: [ {{ $.Values.component | quote }} ]
+{{/*          command: ["sleep", "30000"]*/}}
+          env:
+            - name: ZOOKEEPER
+              value: {{ .Values.zkHosts }}
+            - name: DB_TYPE
+              value: mysql
+            - name: DB_USERNAME
+              value: druid
+            - name: DB_PASSWORD
+              value: druid
+            - name: DB_DBNAME
+              value: druid
+            - name: DB_PORT
+              value: "3306"
+            - name: JAVA_OPTS
+              value: {{ .Values.javaOpts }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+          {{- end }}
+          resources:
+          {{ toYaml .Values.resources | indent 12 }}
+          livenessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /status/health
+              port: {{ .Values.port }}
+          readinessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /status/health
+              port: {{ .Values.port }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          ports:
+            - containerPort: {{ .Values.port }}
+              name: http
+          volumeMounts:
+            - mountPath: /var/druid/
+              name: data
+            - mountPath: /druid.sh
+              subPath: druid.sh
+              name: druid-sh
+      {{- if not .Values.persistence.enabled }}
+      volumes:
+        - name: data
+          emptyDir: {}
+  {{- end }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy.type }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode | quote }}
+            {{- if .Values.persistence.storageClass }}
+        {{- if (eq "-" .Values.persistence.storageClass) }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: "{{ .Values.persistence.storageClass }}"
+        {{- end }}
+        {{- end }}
+        resources:
+          requests:
+            storage: "{{ .Values.persistence.size }}"
+  {{ end }}

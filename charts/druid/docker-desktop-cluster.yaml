@@ -1,19 +1,7 @@
-historical:
-  javaOpts: "-Xms512M -Xmx1G -XX:MaxDirectMemorySize=1g"
+javaOpts: "-Xms512M -Xmx1G -XX:MaxDirectMemorySize=1g"
 
-  env:
-    DRUID_USE_CONTAINER_IP: "true"
-    druid_processing_numThreads: "1"
-    druid_processing_numMergeBuffers: "1"
-    druid_processing_buffer_sizeBytes: "50857600"
-#    DRUID_MAXDIRECTMEMORYSIZE: "100m"
-
-broker:
-  javaOpts: "-Xms256M -Xmx512M -XX:MaxDirectMemorySize=1g"
-
-  env:
-    DRUID_USE_CONTAINER_IP: "true"
-    druid_processing_numThreads: "1"
-    druid_processing_numMergeBuffers: "1"
-    druid_processing_buffer_sizeBytes: "50857600"
-#    DRUID_MAXDIRECTMEMORYSIZE: "100m"
+env:
+  DRUID_USE_CONTAINER_IP: "true"
+  druid_processing_numThreads: "1"
+  druid_processing_numMergeBuffers: "1"
+  druid_processing_buffer_sizeBytes: "50857600"
