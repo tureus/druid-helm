@@ -1,0 +1,18 @@
+antiAffinity: "soft"
+nodeAffinity:
+  requiredDuringSchedulingIgnoredDuringExecution:
+    nodeSelectorTerms:
+    - matchExpressions:
+        - key: kops.k8s.io/instancegroup
+          operator: In
+          values:
+            - druid
+tolerations:
+  - key: "ids.purpose"
+    operator: "Equal"
+    value: "druid"
+    effect: "NoSchedule"
+resources:
+  requests:
+    memory: "60000Mi"
+    cpu: "3500m"
